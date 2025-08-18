@@ -1,9 +1,5 @@
-
-
 #include <errno.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "matrix.h"
 
@@ -127,22 +123,71 @@ void matrix_print(struct matrix *m)
 
 		printf("\n");
 	}
+	printf("\n");
 }
 
-void matrix_shift_east(struct matrix *m)
+/* Shifts */
+
+void matrix_shift_east(struct matrix *m, size_t nshifts)
 {
-	if (!m) {
+	if (!m || !nshifts) {
 		errno = EINVAL;
 		perror(__func__);
 		return;
 	}
 
-	for (int row = 0; row < m->rows; row++) {
-		for (int col = m->cols - 1; col >= 0; col--) {
-			if (col == 0)
-				m->data[row][col] = 0;
-			else
-				m->data[row][col] = m->data[row][col - 1];
+	for (int r = 0; r < m->rows; r++) {
+		for (int c = m->cols - 1; c >= 0; c--) {
+			int src = c - nshifts;
+			m->data[r][c] = (src >= 0) ? m->data[r][src] : 0;
+		}
+	}
+}
+
+void matrix_shift_west(struct matrix *m, size_t nshifts)
+{
+	if (!m || !nshifts) {
+		errno = EINVAL;
+		perror(__func__);
+		return;
+	}
+
+	for (int r = 0; r < m->rows; r++) {
+		for (int c = 0; c < m->cols; c++) {
+			int src = c + nshifts;
+			m->data[r][c] = (src < m->cols) ? m->data[r][src] : 0;
+		}
+	}
+}
+
+void matrix_shift_north(struct matrix *m, size_t nshifts)
+{
+	if (!m || !nshifts) {
+		errno = EINVAL;
+		perror(__func__);
+		return;
+	}
+
+	for (int r = 0; r < m->rows; r++) {
+		int src = r + nshifts;
+		for (int c = 0; c < m->cols; c++) {
+			m->data[r][c] = (src < m->rows) ? m->data[src][c] : 0;
+		}
+	}
+}
+
+void matrix_shift_south(struct matrix *m, size_t nshifts)
+{
+	if (!m || !nshifts) {
+		errno = EINVAL;
+		perror(__func__);
+		return;
+	}
+
+	for (int r = m->rows - 1; r >= 0; r--) {
+		int src = r - nshifts;
+		for (int c = 0; c < m->cols; c++) {
+			m->data[r][c] = (src >= 0) ? m->data[src][c] : 0;
 		}
 	}
 }
@@ -158,9 +203,9 @@ void matrix_set_field(struct matrix *m, int row, int col, int val)
 	m->data[row][col] = val;
 }
 
-void matrix_set_row_gf2(struct matrix *m, int row, int bits)
+void matrix_set_row_gf2(struct matrix *m, int row, unsigned long long bits)
 {
-	if (!m || row > m->rows) {
+	if (!m || row > m->rows - 1) {
 		errno = EINVAL;
 		perror(__func__);
 		return;
@@ -170,17 +215,99 @@ void matrix_set_row_gf2(struct matrix *m, int row, int bits)
 		matrix_set_field(m, row, col, (bits >> ((m->cols - 1) - col) & 0x1));
 }
 
-int main(int argc, char *argv[])
+/* ---------------- Operations ---------------- */
+
+struct matrix *matrix_copy(const struct matrix *src)
 {
-	struct matrix *m;
+	if (!src)
+		return NULL;
+	struct matrix *m = matrix_alloc(src->rows, src->cols);
+	if (!m)
+		return NULL;
 
-	m = matrix_identity_new(22);
+	for (int r = 0; r < src->rows; r++)
+		for (int c = 0; c < src->cols; c++)
+			m->data[r][c] = src->data[r][c];
 
-	matrix_shift_east(m);
-	matrix_set_row_gf2(m, 21, 0xff);
-	matrix_print(m);
+	return m;
+}
 
-	matrix_delete(m);
+int matrix_equal(const struct matrix *a, const struct matrix *b)
+{
+	if (!a || !b || a->rows != b->rows || a->cols != b->cols)
+		return 0;
 
-	return 0;
+	for (int r = 0; r < a->rows; r++)
+		for (int c = 0; c < a->cols; c++)
+			if (a->data[r][c] != b->data[r][c])
+				return 0;
+
+	return 1;
+}
+
+struct matrix *matrix_add(const struct matrix *a, const struct matrix *b)
+{
+	if (!a || !b || a->rows != b->rows || a->cols != b->cols)
+		return NULL;
+
+	struct matrix *m = matrix_alloc(a->rows, a->cols);
+	if (!m)
+		return NULL;
+
+	for (int r = 0; r < a->rows; r++)
+		for (int c = 0; c < a->cols; c++)
+			m->data[r][c] = a->data[r][c] + b->data[r][c];
+
+	return m;
+}
+
+struct matrix *matrix_sub(const struct matrix *a, const struct matrix *b)
+{
+	if (!a || !b || a->rows != b->rows || a->cols != b->cols)
+		return NULL;
+
+	struct matrix *m = matrix_alloc(a->rows, a->cols);
+	if (!m)
+		return NULL;
+
+	for (int r = 0; r < a->rows; r++)
+		for (int c = 0; c < a->cols; c++)
+			m->data[r][c] = a->data[r][c] - b->data[r][c];
+
+	return m;
+}
+
+struct matrix *matrix_mul(const struct matrix *a, const struct matrix *b)
+{
+	if (!a || !b || a->cols != b->rows)
+		return NULL;
+
+	struct matrix *m = matrix_alloc(a->rows, b->cols);
+	if (!m)
+		return NULL;
+
+	for (int i = 0; i < a->rows; i++) {
+		for (int j = 0; j < b->cols; j++) {
+			int sum = 0;
+			for (int k = 0; k < a->cols; k++)
+				sum += a->data[i][k] * b->data[k][j];
+			m->data[i][j] = sum;
+		}
+	}
+	return m;
+}
+
+struct matrix *matrix_transpose(const struct matrix *src)
+{
+	if (!src)
+		return NULL;
+	struct matrix *m = matrix_alloc(src->cols, src->rows);
+	if (!m)
+		return NULL;
+
+	for (int r = 0; r < src->rows; r++)
+		for (int c = 0; c < src->cols; c++)
+			m->data[c][r] = src->data[r][c];
+
+	return m;
 }
