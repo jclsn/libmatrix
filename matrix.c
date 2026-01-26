@@ -297,7 +297,7 @@ struct matrix *mat_mul(const struct matrix *a, const struct matrix *b)
 	return m;
 }
 
-struct matrix *mat_transpose(const struct matrix *src)
+struct matrix *mat_trans(const struct matrix *src)
 {
 	if (!src)
 		return NULL;

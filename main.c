@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 
 	mat_delete(mat_c);
 
-	MAT_TRANSPOSE(mat_e, mat_a);
+	MAT_TRANS(mat_e, mat_a);
 	mat_print(mat_e);
 
 	/* FLOAT OPERATIONS */
@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 
 	fmat_delete(fmat_c);
 
-	FMAT_TRANSPOSE(fmat_e, fmat_a);
+	FMAT_TRANS(fmat_e, fmat_a);
 	fmat_print(fmat_e);
 
 	return 0;

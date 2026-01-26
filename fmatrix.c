@@ -298,7 +298,7 @@ struct fmatrix *fmat_mul(const struct fmatrix *a, const struct fmatrix *b)
 	return m;
 }
 
-struct fmatrix *fmat_transpose(const struct fmatrix *src)
+struct fmatrix *fmat_trans(const struct fmatrix *src)
 {
 	if (!src)
 		return NULL;

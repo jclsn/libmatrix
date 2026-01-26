@@ -69,7 +69,7 @@ struct matrix {
 		}                                                                             \
 	} while (0)
 
-#define MAT_TRANSPOSE(name, A)                                      \
+#define MAT_TRANS(name, A)                                      \
 	MATRIX(name, (A)->cols, (A)->rows);                         \
 	do {                                                        \
 		for (size_t i = 0; i < (A)->rows; i++) {            \
@@ -120,7 +120,7 @@ void mat_print(struct matrix *m);
 struct matrix *mat_add(const struct matrix *a, const struct matrix *b);
 struct matrix *mat_sub(const struct matrix *a, const struct matrix *b);
 struct matrix *mat_mul(const struct matrix *a, const struct matrix *b);
-struct matrix *mat_transpose(const struct matrix *m);
+struct matrix *mat_trans(const struct matrix *m);
 struct matrix *mat_copy(const struct matrix *src);
 
 bool mat_equal(const struct matrix *a, const struct matrix *b);
