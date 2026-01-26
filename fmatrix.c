@@ -193,7 +193,7 @@ void fmat_shift_south(struct fmatrix *m, size_t nshifts)
 	}
 }
 
-void fmat_set_field(struct fmatrix *m, size_t row, size_t col, fval_t val)
+void fmat_set(struct fmatrix *m, size_t row, size_t col, fval_t val)
 {
 	if (!m || row > m->rows || col > m->cols) {
 		errno = EINVAL;
@@ -213,7 +213,7 @@ void fmat_set_row_gf2(struct fmatrix *m, size_t row, unsigned long long bits)
 	}
 
 	for (int col = 0; col < m->cols; col++)
-		fmat_set_field(m, row, col, (bits >> ((m->cols - 1) - col) & 0x1));
+		fmat_set(m, row, col, (bits >> ((m->cols - 1) - col) & 0x1));
 }
 
 /* ---------------- Operations ---------------- */

@@ -89,40 +89,48 @@ struct matrix {
 		}                                                   \
 	} while (0)
 
-/* Heap-allocated matrix */
+/* Allocate an empty matrix */
 struct matrix *mat_alloc(const size_t rows, const size_t cols);
+/* Delete a matrix */
 void mat_delete(struct matrix *m);
 
-/* Identity */
+/* Set the matrix to an idenitity matrix */
 void mat_set_identity(struct matrix *m);
+/* Allocate a new identity matrix */
 struct matrix *mat_identity_new(const size_t dims);
 
-/* Shifts */
+/* Shift all fields of the matrix up */
 void mat_shift_north(struct matrix *m, size_t nshifts);
+/* Shift all fields of the matrix down */
 void mat_shift_south(struct matrix *m, size_t nshifts);
+/* Shift all fields of the matrix right */
 void mat_shift_east(struct matrix *m, size_t nshifts);
+/* Shift all fields of the matrix left */
 void mat_shift_west(struct matrix *m, size_t nshifts);
 
-/* Accessors */
-void mat_set_field(struct matrix *m, size_t row, size_t col, val_t val);
-val_t mat_get_field(struct matrix *m, size_t row, size_t col);
+/* Set a single field of a matrix */
+void mat_set(struct matrix *m, size_t row, size_t col, val_t val);
+/* Get a single field of a matrix */
+val_t mat_get(struct matrix *m, size_t row, size_t col);
 
-/*
- * GF(2) helper.
- * Still conceptually integer-based, values are written as 0.0 or 1.0.
- */
+/* GF(2) helper that sets a row of a matrix to the bits of an integer */
 void mat_set_row_gf2(struct matrix *m, size_t row, unsigned long long bits);
 
-/* Output */
+/* Print a matrix */
 void mat_print(struct matrix *m);
 
-/* Operations */
+/* Add two matrices */
 struct matrix *mat_add(const struct matrix *a, const struct matrix *b);
+/* Subtract two matrices */
 struct matrix *mat_sub(const struct matrix *a, const struct matrix *b);
+/* Multiply two matrices */
 struct matrix *mat_mul(const struct matrix *a, const struct matrix *b);
+/* Transpose a matrix */
 struct matrix *mat_trans(const struct matrix *m);
+/* Copy matrix */
 struct matrix *mat_copy(const struct matrix *src);
 
+/* Compare two matrices */
 bool mat_equal(const struct matrix *a, const struct matrix *b);
 
 #endif /* MATRIX_H */

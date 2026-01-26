@@ -192,7 +192,7 @@ void mat_shift_south(struct matrix *m, size_t nshifts)
 	}
 }
 
-void mat_set_field(struct matrix *m, size_t row, size_t col, val_t val)
+void mat_set(struct matrix *m, size_t row, size_t col, val_t val)
 {
 	if (!m || row > m->rows || col > m->cols) {
 		errno = EINVAL;
@@ -212,7 +212,7 @@ void mat_set_row_gf2(struct matrix *m, size_t row, unsigned long long bits)
 	}
 
 	for (int col = 0; col < m->cols; col++)
-		mat_set_field(m, row, col, (bits >> ((m->cols - 1) - col) & 0x1));
+		mat_set(m, row, col, (bits >> ((m->cols - 1) - col) & 0x1));
 }
 
 /* ---------------- Operations ---------------- */

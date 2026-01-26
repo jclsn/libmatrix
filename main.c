@@ -8,15 +8,15 @@ int main(int argc, char *argv[])
 	MATRIX(mat_a, 3, 3);
 	MATRIX(mat_b, 3, 3);
 
-	mat_set_field(mat_a, 0, 0, 1);
-	mat_set_field(mat_a, 0, 1, 1);
-	mat_set_field(mat_a, 0, 2, 1);
+	mat_set(mat_a, 0, 0, 1);
+	mat_set(mat_a, 0, 1, 1);
+	mat_set(mat_a, 0, 2, 1);
 
 	mat_print(mat_a);
 
-	mat_set_field(mat_b, 0, 0, 1);
-	mat_set_field(mat_b, 1, 0, 1);
-	mat_set_field(mat_b, 2, 0, 1);
+	mat_set(mat_b, 0, 0, 1);
+	mat_set(mat_b, 1, 0, 1);
+	mat_set(mat_b, 2, 0, 1);
 
 	mat_print(mat_b);
 
@@ -37,15 +37,15 @@ int main(int argc, char *argv[])
 	FMATRIX(fmat_a, 3, 3);
 	FMATRIX(fmat_b, 3, 3);
 
-	fmat_set_field(fmat_a, 0, 0, 1);
-	fmat_set_field(fmat_a, 0, 1, 1);
-	fmat_set_field(fmat_a, 0, 2, 1);
+	fmat_set(fmat_a, 0, 0, 1);
+	fmat_set(fmat_a, 0, 1, 1);
+	fmat_set(fmat_a, 0, 2, 1);
 
 	fmat_print(fmat_a);
 
-	fmat_set_field(fmat_b, 0, 0, 1);
-	fmat_set_field(fmat_b, 1, 0, 1);
-	fmat_set_field(fmat_b, 2, 0, 1);
+	fmat_set(fmat_b, 0, 0, 1);
+	fmat_set(fmat_b, 1, 0, 1);
+	fmat_set(fmat_b, 2, 0, 1);
 
 	fmat_print(fmat_b);
 
