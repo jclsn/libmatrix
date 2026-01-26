@@ -251,9 +251,9 @@ bool fmat_equal(const struct fmatrix *a, const struct fmatrix *b)
 	for (size_t r = 0; r < a->rows; r++)
 		for (size_t c = 0; c < a->cols; c++)
 			if (a->data[r][c] != b->data[r][c])
-				return true;
+				return false;
 
-	return false;
+	return true;
 }
 
 struct fmatrix *fmat_add(const struct fmatrix *a, const struct fmatrix *b)
