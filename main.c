@@ -5,29 +5,29 @@ int main(int argc, char *argv[])
 	MATRIX(A, 3, 3);
 	MATRIX(B, 3, 3);
 
-	matrix_set_field(A, 0, 0, 1);
-	matrix_set_field(A, 0, 1, 1);
-	matrix_set_field(A, 0, 2, 1);
+	mat_set_field(A, 0, 0, 1);
+	mat_set_field(A, 0, 1, 1);
+	mat_set_field(A, 0, 2, 1);
 
-	matrix_print(A);
+	mat_print(A);
 
-	matrix_set_field(B, 0, 0, 1);
-	matrix_set_field(B, 1, 0, 1);
-	matrix_set_field(B, 2, 0, 1);
+	mat_set_field(B, 0, 0, 1);
+	mat_set_field(B, 1, 0, 1);
+	mat_set_field(B, 2, 0, 1);
 
-	matrix_print(B);
+	mat_print(B);
 
-	MATRIX_MUL(D, A, B);
+	MAT_MUL(D, A, B);
 
-	matrix_print(D);
+	mat_print(D);
 
-	struct matrix *C = matrix_mul(A, B);
-	matrix_print(C);
+	struct matrix *C = mat_mul(A, B);
+	mat_print(C);
 
-	matrix_delete(C);
+	mat_delete(C);
 
-	MATRIX_TRANSPOSE(E, A);
-	matrix_print(E);
+	MAT_TRANSPOSE(E, A);
+	mat_print(E);
 
 	return 0;
 }
