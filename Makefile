@@ -1,11 +1,14 @@
 TARGET = matrix
-IDIR =./include
-CC=gcc
-CFLAGS=-I$(IDIR)
+IDIR = ./include
+CC = gcc
 
-ODIR=./
+CFLAGS = -I$(IDIR)
+CFLAGS_DEBUG = -I$(IDIR) -g -O0 -Wall -Wextra -Wpedantic -fsanitize=address,undefined
+LDFLAGS_DEBUG = -fsanitize=address,undefined
 
-LIBS=
+ODIR = ./
+
+LIBS =
 
 _OBJ = main.o matrix.o fmatrix.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
@@ -16,7 +19,11 @@ $(ODIR)/%.o: %.c
 $(TARGET): $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
-.PHONY: clean
+debug: CFLAGS=$(CFLAGS_DEBUG)
+debug: LIBS=$(LDFLAGS_DEBUG)
+debug: clean $(TARGET)
+
+.PHONY: clean debug
 
 clean:
 	rm -f $(ODIR)/*.o
