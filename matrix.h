@@ -127,8 +127,10 @@ struct matrix *mat_sub(const struct matrix *a, const struct matrix *b);
 struct matrix *mat_mul(const struct matrix *a, const struct matrix *b);
 /* Transpose a matrix */
 struct matrix *mat_trans(const struct matrix *m);
-/* Copy matrix */
-struct matrix *mat_copy(const struct matrix *src);
+/* Copy a matrix */
+void mat_copy(const struct matrix *src, struct matrix *dst);
+/* Duplicate a matrix */
+struct matrix *mat_dup(const struct matrix *src);
 
 /* Compare two matrices */
 bool mat_equal(const struct matrix *a, const struct matrix *b);
