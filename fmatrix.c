@@ -120,7 +120,7 @@ void fmat_print(struct fmatrix *m)
 
 	for (size_t row = 0; row < m->rows; row++) {
 		for (size_t col = 0; col < m->cols; col++)
-			printf("%f  ", m->data[row][col]);
+			printf("%.1f  ", m->data[row][col]);
 
 		printf("\n");
 	}
