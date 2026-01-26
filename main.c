@@ -32,6 +32,12 @@ int main(int argc, char *argv[])
 	MAT_TRANS(mat_e, mat_a);
 	mat_print(mat_e);
 
+	mat_copy(mat_a, mat_b);
+	if (mat_equal(mat_a, mat_b))
+		printf("The matrices equal\n\n");
+	else
+		printf("The matrices don't equal\n\n");
+
 	/* FLOAT OPERATIONS */
 
 	FMATRIX(fmat_a, 3, 3);
@@ -60,6 +66,12 @@ int main(int argc, char *argv[])
 
 	FMAT_TRANS(fmat_e, fmat_a);
 	fmat_print(fmat_e);
+
+	fmat_copy(fmat_a, fmat_b);
+	if (fmat_equal(fmat_a, fmat_b))
+		printf("The matrices equal\n");
+	else
+		printf("The matrixes don't equal\n");
 
 	return 0;
 }
