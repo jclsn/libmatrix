@@ -1,126 +1,67 @@
-#include "fmatrix.h"
-#include "matrix.h"
+#include <stdio.h>
+
+#include "tests.h"
 
 int main(void)
 {
-	/* INT OPERATIONS */
+	jl_init();
 
-	MATRIX(mat_a, 3, 3);
-	MATRIX(mat_b, 3, 3);
+	/* int matrices */
 
-	printf("mat_a:\n");
-	mat_set(mat_a, 0, 0, 1);
-	mat_set(mat_a, 0, 1, 1);
-	mat_set(mat_a, 0, 2, 1);
-	mat_print(mat_a);
+	struct matrix *A = mat_alloc(3, 3);
+	struct matrix *B = mat_alloc(3, 3);
 
-	printf("mat_b:\n");
-	mat_set(mat_b, 0, 0, 1);
-	mat_set(mat_b, 1, 0, 1);
-	mat_set(mat_b, 2, 0, 1);
-	mat_print(mat_b);
+	mat_set(A, 0, 0, 1);
+	mat_set(A, 0, 1, 1);
+	mat_set(A, 0, 2, 1);
 
-	MAT_MUL(mat_d, mat_a, mat_b);
-	printf("mat_a x mat_b:\n");
-	mat_print(mat_d);
+	printf("\nTest A:\n");
+	jl_test_mat(A, "A = [1 1 1; 0 0 0; 0 0 0]");
 
-	struct matrix *mat_c = mat_mul(mat_a, mat_b);
-	printf("mat_a x mat_b:\n");
-	mat_print(mat_c);
+	mat_set(B, 0, 0, 1);
+	mat_set(B, 1, 0, 1);
+	mat_set(B, 2, 0, 1);
 
-	mat_delete(mat_c);
+	printf("\nTest B:\n");
+	jl_test_mat(B, "B = [1 0 0; 1 0 0; 1 0 0]");
 
-	printf("mat_a^T:\n");
-	MAT_TRANS(mat_e, mat_a);
-	mat_print(mat_e);
+	struct matrix *C = mat_mul(A, B);
+	printf("\nTest C:\n");
+	jl_test_mat(C, "A * B");
 
-	printf("mat_a = mat_b\n");
-	mat_copy(mat_a, mat_b);
-	printf("mat_a == mat_b:\n");
-	if (mat_equal(mat_a, mat_b))
-		printf("The matrices equal\n\n");
-	else
-		printf("The matrices don't equal\n\n");
+	mat_delete(A);
+	mat_delete(B);
+	mat_delete(C);
 
-	printf("mat_f:\n");
-	struct matrix *mat_f = mat_alloc(1, 2);
-	mat_set(mat_f, 0, 0, 3);
-	mat_set(mat_f, 0, 1, 5);
-	mat_print(mat_f);
+	/* float matrices */
 
-	printf("mat_g:\n");
-	struct matrix *mat_g = mat_alloc(2, 1);
-	mat_set(mat_g, 0, 0, 3);
-	mat_set(mat_g, 1, 0, 5);
-	mat_print(mat_g);
+	struct fmatrix *fA = fmat_alloc(3, 3);
+	struct fmatrix *fB = fmat_alloc(3, 3);
 
-	printf("mat_f x mat_g:\n");
-	struct matrix *mat_h = mat_mul(mat_f, mat_g);
-	mat_print(mat_h);
+	fmat_set(fA, 0, 0, 1.0);
+	fmat_set(fA, 0, 1, 1.0);
+	fmat_set(fA, 0, 2, 1.0);
 
-	printf("mat_a x mat_b:\n");
-	struct matrix *mat_i = mat_mul(mat_a, mat_b);
-	mat_print(mat_i);
+	printf("\nTest fA:\n");
+	jl_test_fmat(fA, "fA = [1. 1. 1.; 0. 0. 0.; 0. 0. 0.]", 1e-12, 1e-12);
 
+	fmat_set(fB, 0, 0, 1.0);
+	fmat_set(fB, 1, 0, 1.0);
+	fmat_set(fB, 2, 0, 1.0);
 
-	/* FLOAT OPERATIONS */
+	printf("\nTest fB:\n");
+	jl_test_fmat(fB, "fB = [1. 0. 0.; 1. 0. 0.; 1. 0. 0.]", 1e-12, 1e-12);
 
-	FMATRIX(fmat_a, 3, 3);
-	FMATRIX(fmat_b, 3, 3);
+	struct fmatrix *fC = fmat_mul(fA, fB);
 
-	printf("fmat_a:\n");
-	fmat_set(fmat_a, 0, 0, 1);
-	fmat_set(fmat_a, 0, 1, 1);
-	fmat_set(fmat_a, 0, 2, 1);
-	fmat_print(fmat_a);
+	printf("\nTest fC:\n");
+	jl_test_fmat(fC, "fC = fA * fB", 1e-12, 1e-12);
 
-	printf("fmat_b:\n");
-	fmat_set(fmat_b, 0, 0, 1);
-	fmat_set(fmat_b, 1, 0, 1);
-	fmat_set(fmat_b, 2, 0, 1);
-	fmat_print(fmat_b);
+	fmat_delete(fA);
+	fmat_delete(fB);
+	fmat_delete(fC);
 
-	FMAT_MUL(fmat_d, fmat_a, fmat_b);
-	printf("fmat_a x fmat_b:\n");
-	fmat_print(fmat_d);
-
-	struct fmatrix *fmat_c = fmat_mul(fmat_a, fmat_b);
-	printf("fmat_a x fmat_b:\n");
-	fmat_print(fmat_c);
-
-	fmat_delete(fmat_c);
-
-	printf("fmat_a^T:\n");
-	FMAT_TRANS(fmat_e, fmat_a);
-	fmat_print(fmat_e);
-
-	printf("fmat_a = fmat_b\n");
-	fmat_copy(fmat_a, fmat_b);
-	printf("fmat_a == fmat_b:\n");
-	if (fmat_equal(fmat_a, fmat_b))
-		printf("The fmatrices equal\n\n");
-	else
-		printf("The fmatrices don't equal\n\n");
-
-	printf("fmat_f:\n");
-	struct fmatrix *fmat_f = fmat_alloc(1, 2);
-	fmat_set(fmat_f, 0, 0, 3);
-	fmat_set(fmat_f, 0, 1, 5);
-	fmat_print(fmat_f);
-
-	printf("fmat_g:\n");
-	struct fmatrix *fmat_g = fmat_alloc(2, 1);
-	fmat_set(fmat_g, 0, 0, 3);
-	fmat_set(fmat_g, 1, 0, 5);
-	fmat_print(fmat_g);
-
-	printf("fmat_f x fmat_g:\n");
-	struct fmatrix *fmat_h = fmat_mul(fmat_f, fmat_g);
-	fmat_print(fmat_h);
-
-	printf("fmat_a x fmat_b:\n");
-	struct fmatrix *fmat_i = fmat_mul(fmat_a, fmat_b);
-	fmat_print(fmat_i);
+	jl_atexit_hook(0);
 
 	return 0;
 }

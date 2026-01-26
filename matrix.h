@@ -69,7 +69,7 @@ struct matrix {
 		}                                                                             \
 	} while (0)
 
-#define MAT_TRANS(name, A)                                      \
+#define MAT_TRANS(name, A)                                          \
 	MATRIX(name, (A)->cols, (A)->rows);                         \
 	do {                                                        \
 		for (size_t i = 0; i < (A)->rows; i++) {            \

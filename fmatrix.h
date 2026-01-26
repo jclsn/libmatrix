@@ -69,7 +69,7 @@ struct fmatrix {
 		}                                                                             \
 	} while (0)
 
-#define FMAT_TRANS(name, A)                                     \
+#define FMAT_TRANS(name, A)                                         \
 	FMATRIX(name, (A)->cols, (A)->rows);                        \
 	do {                                                        \
 		for (size_t i = 0; i < (A)->rows; i++) {            \
