@@ -7,7 +7,7 @@ ODIR=./
 
 LIBS=
 
-_OBJ = main.o matrix.o
+_OBJ = main.o matrix.o fmatrix.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: %.c
