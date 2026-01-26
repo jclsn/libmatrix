@@ -16,24 +16,24 @@ struct fmatrix {
 
 /* Stack-allocated matrix */
 #define FMATRIX(name, R, C)                                   \
-	fval_t name##_buf[R][C];                     \
-	fval_t *name##_rowptrs[R];                   \
-	for (size_t i = 0; i < (R); i++)                        \
-		name##_rowptrs[i] = name##_buf[i];           \
+	fval_t name##_buf[R][C];                              \
+	fval_t *name##_rowptrs[R];                            \
+	for (size_t i = 0; i < (R); i++)                      \
+		name##_rowptrs[i] = name##_buf[i];            \
 	struct fmatrix name##_obj = { C, R, name##_rowptrs }; \
 	struct fmatrix *name = &name##_obj;                   \
 	memset(name##_buf, 0, sizeof(name##_buf))
 
-#define FMAT_MUL(name, A, B)                                                            \
-	FMATRIX(name, (A)->rows, (B)->cols);                                               \
+#define FMAT_MUL(name, A, B)                                                              \
+	FMATRIX(name, (A)->rows, (B)->cols);                                              \
 	do {                                                                              \
 		if ((A)->cols != (B)->rows) {                                             \
-			fprintf(stderr, "FMAT_MUL: dimension mismatch\n");              \
+			fprintf(stderr, "FMAT_MUL: dimension mismatch\n");                \
 		} else {                                                                  \
-			for (size_t i = 0; i < (A)->rows; i++) {                             \
-				for (size_t j = 0; j < (B)->cols; j++) {                     \
-					fval_t sum = 0.0;                         \
-					for (size_t k = 0; k < (A)->cols; k++)               \
+			for (size_t i = 0; i < (A)->rows; i++) {                          \
+				for (size_t j = 0; j < (B)->cols; j++) {                  \
+					fval_t sum = 0.0;                                 \
+					for (size_t k = 0; k < (A)->cols; k++)            \
 						sum += (A)->data[i][k] * (B)->data[k][j]; \
 					name->data[i][j] = sum;                           \
 				}                                                         \
@@ -41,49 +41,49 @@ struct fmatrix {
 		}                                                                         \
 	} while (0)
 
-#define FMAT_ADD(name, A, B)                                                                \
-	FMATRIX(name, (A)->rows, (A)->cols);                                                   \
+#define FMAT_ADD(name, A, B)                                                                  \
+	FMATRIX(name, (A)->rows, (A)->cols);                                                  \
 	do {                                                                                  \
 		if ((A)->rows != (B)->rows || (A)->cols != (B)->cols) {                       \
-			fprintf(stderr, "FMAT_ADD: dimension mismatch\n");                  \
+			fprintf(stderr, "FMAT_ADD: dimension mismatch\n");                    \
 		} else {                                                                      \
-			for (size_t i = 0; i < (A)->rows; i++) {                                 \
-				for (size_t j = 0; j < (A)->cols; j++) {                         \
+			for (size_t i = 0; i < (A)->rows; i++) {                              \
+				for (size_t j = 0; j < (A)->cols; j++) {                      \
 					name->data[i][j] = (A)->data[i][j] + (B)->data[i][j]; \
 				}                                                             \
 			}                                                                     \
 		}                                                                             \
 	} while (0)
 
-#define FMAT_SUB(name, A, B)                                                                \
-	FMATRIX(name, (A)->rows, (A)->cols);                                                   \
+#define FMAT_SUB(name, A, B)                                                                  \
+	FMATRIX(name, (A)->rows, (A)->cols);                                                  \
 	do {                                                                                  \
 		if ((A)->rows != (B)->rows || (A)->cols != (B)->cols) {                       \
-			fprintf(stderr, "FMAT_SUB: dimension mismatch\n");                  \
+			fprintf(stderr, "FMAT_SUB: dimension mismatch\n");                    \
 		} else {                                                                      \
-			for (size_t i = 0; i < (A)->rows; i++) {                                 \
-				for (size_t j = 0; j < (A)->cols; j++) {                         \
+			for (size_t i = 0; i < (A)->rows; i++) {                              \
+				for (size_t j = 0; j < (A)->cols; j++) {                      \
 					name->data[i][j] = (A)->data[i][j] - (B)->data[i][j]; \
 				}                                                             \
 			}                                                                     \
 		}                                                                             \
 	} while (0)
 
-#define FMAT_TRANSPOSE(name, A)                                   \
-	FMATRIX(name, (A)->cols, (A)->rows);                         \
+#define FMAT_TRANSPOSE(name, A)                                     \
+	FMATRIX(name, (A)->cols, (A)->rows);                        \
 	do {                                                        \
-		for (size_t i = 0; i < (A)->rows; i++) {               \
-			for (size_t j = 0; j < (A)->cols; j++) {       \
+		for (size_t i = 0; i < (A)->rows; i++) {            \
+			for (size_t j = 0; j < (A)->cols; j++) {    \
 				name->data[j][i] = (A)->data[i][j]; \
 			}                                           \
 		}                                                   \
 	} while (0)
 
-#define FMAT_COPY(name, A)                                        \
-	FMATRIX(name, (A)->rows, (A)->cols);                         \
+#define FMAT_COPY(name, A)                                          \
+	FMATRIX(name, (A)->rows, (A)->cols);                        \
 	do {                                                        \
-		for (size_t i = 0; i < (A)->rows; i++) {               \
-			for (size_t j = 0; j < (A)->cols; j++) {       \
+		for (size_t i = 0; i < (A)->rows; i++) {            \
+			for (size_t j = 0; j < (A)->cols; j++) {    \
 				name->data[i][j] = (A)->data[i][j]; \
 			}                                           \
 		}                                                   \
