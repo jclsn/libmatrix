@@ -217,7 +217,7 @@ void mat_set_row_gf2(struct matrix *m, size_t row, unsigned long long bits)
 
 /* ---------------- Operations ---------------- */
 
-void mat_copy(const struct matrix *src, struct matrix *dst)
+void mat_copy(struct matrix *dst, const struct matrix *src)
 {
 	if (!src || !dst)
 		return;
@@ -285,6 +285,7 @@ struct matrix *mat_sub(const struct matrix *a, const struct matrix *b)
 			m->data[r][c] = a->data[r][c] - b->data[r][c];
 
 	return m;
+
 }
 
 struct matrix *mat_mul(const struct matrix *a, const struct matrix *b)
@@ -304,6 +305,7 @@ struct matrix *mat_mul(const struct matrix *a, const struct matrix *b)
 			m->data[i][j] = sum;
 		}
 	}
+
 	return m;
 }
 

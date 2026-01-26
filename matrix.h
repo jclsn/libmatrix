@@ -128,7 +128,7 @@ struct matrix *mat_mul(const struct matrix *a, const struct matrix *b);
 /* Transpose a matrix */
 struct matrix *mat_trans(const struct matrix *m);
 /* Copy a matrix */
-void mat_copy(const struct matrix *src, struct matrix *dst);
+void mat_copy(struct matrix *dst, const struct matrix *src);
 /* Duplicate a matrix */
 struct matrix *mat_dup(const struct matrix *src);
 
