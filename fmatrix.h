@@ -89,40 +89,48 @@ struct fmatrix {
 		}                                                   \
 	} while (0)
 
-/* Heap-allocated matrix */
+/* Allocate an empty floating-point matrix */
 struct fmatrix *fmat_alloc(const size_t rows, const size_t cols);
+/* Delete a floating-point matrix */
 void fmat_delete(struct fmatrix *m);
 
-/* Identity */
+/* Set the floating-point matrix to an idenitity matrix */
 void fmat_set_identity(struct fmatrix *m);
+/* Allocate a new identity floating-point matrix */
 struct fmatrix *fmat_identity_new(const size_t dims);
 
-/* Shifts */
+/* Shift all fields of the floating-point matrix up */
 void fmat_shift_north(struct fmatrix *m, size_t nshifts);
+/* Shift all fields of the floating-point matrix down */
 void fmat_shift_south(struct fmatrix *m, size_t nshifts);
+/* Shift all fields of the floating-point matrix right */
 void fmat_shift_east(struct fmatrix *m, size_t nshifts);
+/* Shift all fields of the floating-point matrix left */
 void fmat_shift_west(struct fmatrix *m, size_t nshifts);
 
-/* Accessors */
-void fmat_set_field(struct fmatrix *m, size_t row, size_t col, fval_t val);
-fval_t fmat_get_field(struct fmatrix *m, size_t row, size_t col);
+/* Set a single field of a floating-point matrix */
+void fmat_set(struct fmatrix *m, size_t row, size_t col, fval_t val);
+/* Get a single field of a floating-point matrix */
+fval_t fmat_get(struct fmatrix *m, size_t row, size_t col);
 
-/*
- * GF(2) helper.
- * Still conceptually integer-based, values are written as 0.0 or 1.0.
- */
+/* GF(2) helper that sets a row of a floating-point matrix to the bits of an integer */
 void fmat_set_row_gf2(struct fmatrix *m, size_t row, unsigned long long bits);
 
-/* Output */
+/* Print a floating-point matrix */
 void fmat_print(struct fmatrix *m);
 
-/* Operations */
+/* Add two floating-point matrices */
 struct fmatrix *fmat_add(const struct fmatrix *a, const struct fmatrix *b);
+/* Subtract two floating-point matrices */
 struct fmatrix *fmat_sub(const struct fmatrix *a, const struct fmatrix *b);
+/* Multiply two floating-point matrices */
 struct fmatrix *fmat_mul(const struct fmatrix *a, const struct fmatrix *b);
+/* Transpose a floating-point matrix */
 struct fmatrix *fmat_trans(const struct fmatrix *m);
+/* Copy floating-point matrix */
 struct fmatrix *fmat_copy(const struct fmatrix *src);
 
+/* Compare two floating-point matrices */
 bool fmat_equal(const struct fmatrix *a, const struct fmatrix *b);
 
 #endif /* FMATRIX_H */
