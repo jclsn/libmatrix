@@ -285,7 +285,6 @@ struct matrix *mat_sub(const struct matrix *a, const struct matrix *b)
 			m->data[r][c] = a->data[r][c] - b->data[r][c];
 
 	return m;
-
 }
 
 struct matrix *mat_mul(const struct matrix *a, const struct matrix *b)
