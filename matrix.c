@@ -217,7 +217,17 @@ void mat_set_row_gf2(struct matrix *m, size_t row, unsigned long long bits)
 
 /* ---------------- Operations ---------------- */
 
-struct matrix *mat_copy(const struct matrix *src)
+void mat_copy(const struct matrix *src, struct matrix *dst)
+{
+	if (!src || !dst)
+		return;
+
+	for (size_t r = 0; r < src->rows; r++)
+		for (size_t c = 0; c < src->cols; c++)
+			dst->data[r][c] = src->data[r][c];
+}
+
+struct matrix *mat_dup(const struct matrix *src)
 {
 	if (!src)
 		return NULL;

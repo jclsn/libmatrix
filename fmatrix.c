@@ -218,7 +218,17 @@ void fmat_set_row_gf2(struct fmatrix *m, size_t row, unsigned long long bits)
 
 /* ---------------- Operations ---------------- */
 
-struct fmatrix *fmat_copy(const struct fmatrix *src)
+void fmat_copy(const struct fmatrix *src, struct fmatrix *dst)
+{
+	if (!src || !dst)
+		return;
+
+	for (size_t r = 0; r < src->rows; r++)
+		for (size_t c = 0; c < src->cols; c++)
+			dst->data[r][c] = src->data[r][c];
+}
+
+struct fmatrix *fmat_dup(const struct fmatrix *src)
 {
 	if (!src)
 		return NULL;

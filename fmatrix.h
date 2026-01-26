@@ -127,8 +127,10 @@ struct fmatrix *fmat_sub(const struct fmatrix *a, const struct fmatrix *b);
 struct fmatrix *fmat_mul(const struct fmatrix *a, const struct fmatrix *b);
 /* Transpose a floating-point matrix */
 struct fmatrix *fmat_trans(const struct fmatrix *m);
-/* Copy floating-point matrix */
-struct fmatrix *fmat_copy(const struct fmatrix *src);
+/* Copy a floating-point matrix */
+void fmat_copy(const struct fmatrix *src, struct fmatrix *dst);
+/* Duplicate a floating-point matrix */
+struct fmatrix *fmat_dup(const struct fmatrix *src);
 
 /* Compare two floating-point matrices */
 bool fmat_equal(const struct fmatrix *a, const struct fmatrix *b);
