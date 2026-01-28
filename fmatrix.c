@@ -207,6 +207,18 @@ void fmat_set(struct fmatrix *m, size_t row, size_t col, fval_t val)
 	m->data[row][col] = val;
 }
 
+void fmat_reset(struct fmatrix *m)
+{
+	if (!m) {
+		errno = EINVAL;
+		perror(__func__);
+		return;
+	}
+
+	for (size_t col = 0; col < m->cols; col++)
+		memset(m->data[col], 0.0, m->rows * sizeof(fval_t));
+}
+
 void fmat_set_row_gf2(struct fmatrix *m, size_t row, unsigned long long bits)
 {
 	if (!m || row > m->rows - 1) {

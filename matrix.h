@@ -112,6 +112,8 @@ void mat_shift_west(struct matrix *m, size_t nshifts);
 void mat_set(struct matrix *m, size_t row, size_t col, val_t val);
 /* Get a single field of a matrix */
 val_t mat_get(struct matrix *m, size_t row, size_t col);
+/* Reset a matrix */
+void mat_reset(struct matrix *m);
 
 /* GF(2) helper that sets a row of a matrix to the bits of an integer */
 void mat_set_row_gf2(struct matrix *m, size_t row, unsigned long long bits);
