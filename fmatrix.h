@@ -112,6 +112,8 @@ void fmat_shift_west(struct fmatrix *m, size_t nshifts);
 void fmat_set(struct fmatrix *m, size_t row, size_t col, fval_t val);
 /* Get a single field of a floating-point matrix */
 fval_t fmat_get(struct fmatrix *m, size_t row, size_t col);
+/* Reset all fields of a floating-point matrix */
+void fmat_reset(struct fmatrix *m);
 
 /* GF(2) helper that sets a row of a floating-point matrix to the bits of an integer */
 void fmat_set_row_gf2(struct fmatrix *m, size_t row, unsigned long long bits);
