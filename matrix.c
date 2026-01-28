@@ -216,8 +216,9 @@ void mat_reset(struct matrix *m)
 		return;
 	}
 
-	for (size_t col = 0; col < m->cols; col++)
-		memset(m->data[col], 0, m->rows * sizeof(val_t));
+	for (size_t row = 0; row < m->rows; row++)
+		for (size_t col = 0; col < m->cols; col++)
+			m->data[row][col] = 0;
 }
 
 void mat_set_row_gf2(struct matrix *m, size_t row, unsigned long long bits)
