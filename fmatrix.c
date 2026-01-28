@@ -215,8 +215,9 @@ void fmat_reset(struct fmatrix *m)
 		return;
 	}
 
-	for (size_t col = 0; col < m->cols; col++)
-		memset(m->data[col], 0.0, m->rows * sizeof(fval_t));
+	for (size_t row = 0; row < m->rows; row++)
+		for (size_t col = 0; col < m->cols; col++)
+			m->data[row][col] = 0.0;
 }
 
 void fmat_set_row_gf2(struct fmatrix *m, size_t row, unsigned long long bits)

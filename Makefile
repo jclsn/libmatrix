@@ -9,7 +9,7 @@ CFLAGS_DEBUG = -I$(IDIR) -g -O0 -Wall -Wextra -Wpedantic -fsanitize=address,unde
 LDFLAGS_DEBUG = -fsanitize=address,undefined
 
 LDFLAGS := -L$(JULIA_DIR)/lib -Wl,-rpath,$(JULIA_DIR)/lib
-LDLIBS  := -ljulia
+LDLIBS  := -ljulia -lcmocka
 
 ODIR = ./
 
