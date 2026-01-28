@@ -17,6 +17,7 @@ struct fmatrix *fmat_alloc(const size_t rows, const size_t cols)
 	struct fmatrix *m = malloc(sizeof(struct fmatrix));
 	if (!m) {
 		perror(__func__);
+		goto error;
 	}
 
 	/* Copy over a temporary matrix that holds the const rows and columns */
@@ -48,10 +49,9 @@ error_columns:
 	}
 
 	free(m->data);
-
 error_rows:
 	free(m);
-
+error:
 	return NULL;
 }
 
@@ -80,8 +80,11 @@ void fmat_delete(struct fmatrix *m)
 
 void fmat_set_identity(struct fmatrix *m)
 {
-	if (!m)
+	if (!m) {
+		errno = EINVAL;
+		perror(__func__);
 		return;
+	}
 
 	if (m->rows != m->cols) {
 		printf("rows: %zu, cols: %zu\nOnly an  m x m matrix can become an identity matrix\n",
@@ -220,8 +223,11 @@ void fmat_set_row_gf2(struct fmatrix *m, size_t row, unsigned long long bits)
 
 void fmat_copy(struct fmatrix *dst, const struct fmatrix *src)
 {
-	if (!src || !dst)
+	if (!src || !dst) {
+		errno = EINVAL;
+		perror(__func__);
 		return;
+	}
 
 	for (size_t r = 0; r < src->rows; r++)
 		for (size_t c = 0; c < src->cols; c++)
@@ -230,11 +236,17 @@ void fmat_copy(struct fmatrix *dst, const struct fmatrix *src)
 
 struct fmatrix *fmat_dup(const struct fmatrix *src)
 {
-	if (!src)
+	if (!src) {
+		errno = EINVAL;
+		perror(__func__);
 		return NULL;
+	}
+
 	struct fmatrix *m = fmat_alloc(src->rows, src->cols);
-	if (!m)
+	if (!m) {
+		perror(__func__);
 		return NULL;
+	}
 
 	for (size_t r = 0; r < src->rows; r++)
 		for (size_t c = 0; c < src->cols; c++)
@@ -245,8 +257,11 @@ struct fmatrix *fmat_dup(const struct fmatrix *src)
 
 bool fmat_equal(const struct fmatrix *a, const struct fmatrix *b)
 {
-	if (!a || !b || a->rows != b->rows || a->cols != b->cols)
-		return 0;
+	if (!a || !b || a->rows != b->rows || a->cols != b->cols) {
+		errno = EINVAL;
+		perror(__func__);
+		return false;
+	}
 
 	for (size_t r = 0; r < a->rows; r++)
 		for (size_t c = 0; c < a->cols; c++)
@@ -258,12 +273,17 @@ bool fmat_equal(const struct fmatrix *a, const struct fmatrix *b)
 
 struct fmatrix *fmat_add(const struct fmatrix *a, const struct fmatrix *b)
 {
-	if (!a || !b || a->rows != b->rows || a->cols != b->cols)
+	if (!a || !b || a->rows != b->rows || a->cols != b->cols) {
+		errno = EINVAL;
+		perror(__func__);
 		return NULL;
+	}
 
 	struct fmatrix *m = fmat_alloc(a->rows, a->cols);
-	if (!m)
+	if (!m) {
+		perror(__func__);
 		return NULL;
+	}
 
 	for (size_t r = 0; r < a->rows; r++)
 		for (size_t c = 0; c < a->cols; c++)
@@ -274,12 +294,17 @@ struct fmatrix *fmat_add(const struct fmatrix *a, const struct fmatrix *b)
 
 struct fmatrix *fmat_sub(const struct fmatrix *a, const struct fmatrix *b)
 {
-	if (!a || !b || a->rows != b->rows || a->cols != b->cols)
+	if (!a || !b || a->rows != b->rows || a->cols != b->cols) {
+		errno = EINVAL;
+		perror(__func__);
 		return NULL;
+	}
 
 	struct fmatrix *m = fmat_alloc(a->rows, a->cols);
-	if (!m)
+	if (!m) {
+		perror(__func__);
 		return NULL;
+	}
 
 	for (size_t r = 0; r < a->rows; r++)
 		for (size_t c = 0; c < a->cols; c++)
@@ -290,12 +315,17 @@ struct fmatrix *fmat_sub(const struct fmatrix *a, const struct fmatrix *b)
 
 struct fmatrix *fmat_mul(const struct fmatrix *a, const struct fmatrix *b)
 {
-	if (!a || !b || a->cols != b->rows)
+	if (!a || !b || a->cols != b->rows) {
+		errno = EINVAL;
+		perror(__func__);
 		return NULL;
+	}
 
 	struct fmatrix *m = fmat_alloc(a->rows, b->cols);
-	if (!m)
+	if (!m) {
+		perror(__func__);
 		return NULL;
+	}
 
 	for (size_t i = 0; i < a->rows; i++) {
 		for (size_t j = 0; j < b->cols; j++) {
@@ -305,16 +335,23 @@ struct fmatrix *fmat_mul(const struct fmatrix *a, const struct fmatrix *b)
 			m->data[i][j] = sum;
 		}
 	}
+
 	return m;
 }
 
 struct fmatrix *fmat_trans(const struct fmatrix *src)
 {
-	if (!src)
+	if (!src) {
+		errno = EINVAL;
+		perror(__func__);
 		return NULL;
+	}
+
 	struct fmatrix *m = fmat_alloc(src->cols, src->rows);
-	if (!m)
+	if (!m) {
+		perror(__func__);
 		return NULL;
+	}
 
 	for (size_t r = 0; r < src->rows; r++)
 		for (size_t c = 0; c < src->cols; c++)
