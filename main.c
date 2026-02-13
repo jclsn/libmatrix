@@ -64,6 +64,7 @@ int main(void)
 		cmocka_unit_test(test_fmatrix_heap_multiplication),
 
 		cmocka_unit_test(test_fmatrix_transposition),
+		cmocka_unit_test(test_fmatrix_inverse),
 	};
 
 	return cmocka_run_group_tests(tests, NULL, NULL);

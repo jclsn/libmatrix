@@ -1,4 +1,5 @@
 #include <errno.h>
+#include <math.h>
 #include <stdlib.h>
 
 #include "fmatrix.h"
@@ -371,4 +372,106 @@ struct fmatrix *fmat_trans(const struct fmatrix *src)
 			m->data[c][r] = src->data[r][c];
 
 	return m;
+}
+
+struct fmatrix *fmat_inv(const struct fmatrix *src)
+{
+	if (!src || src->rows != src->cols) {
+		errno = EINVAL;
+		perror(__func__);
+		return NULL;
+	}
+
+	struct fmatrix *inv = fmat_alloc(src->rows, src->cols);
+	if (!inv) {
+		perror(__func__);
+		return NULL;
+	}
+
+	struct fmatrix *a = fmat_alloc(src->rows, src->cols);
+	if (!a) {
+		perror(__func__);
+		fmat_delete(inv);
+		return NULL;
+	}
+
+	double *inv_row = NULL;
+	double *a_row = NULL;
+	double *inv_i = NULL;
+	double factor = 0.0;
+	double pivot = 0.0;
+	double *a_i = NULL;
+	size_t max_row = 0;
+	double tmp = 0.0;
+
+	/* Copy src to a, initialize inv as identity */
+
+	for (size_t r = 0; r < src->rows; r++)
+		for (size_t c = 0; c < src->cols; c++) {
+			a->data[r][c] = (double)src->data[r][c];
+			inv->data[r][c] = (r == c) ? 1.0 : 0.0;
+		}
+
+	for (size_t r = 0; r < src->rows; r++) {
+
+		/* Pivot search */
+
+		max_row = r;
+
+		for (size_t i = r; i < src->rows; i++)
+			if (fabs(a->data[i][r]) > fabs(a->data[max_row][r]))
+				max_row = i;
+
+		if (fabs(a->data[max_row][r]) < 1e-12) {
+			fprintf(stderr, "%s: matrix is singular\n", __func__);
+			fmat_delete(a);
+			fmat_delete(inv);
+			return NULL;
+		}
+
+		/* Swap rows in a and inv */
+
+		if (max_row != r)
+			for (size_t c = 0; c < src->cols; c++) {
+				tmp = a->data[r][c];
+				a->data[r][c] = a->data[max_row][c];
+				a->data[max_row][c] = tmp;
+
+				tmp = inv->data[r][c];
+				inv->data[r][c] = inv->data[max_row][c];
+				inv->data[max_row][c] = tmp;
+			}
+
+		/* Cache pivot row */
+
+		a_row = a->data[r];
+		inv_row = inv->data[r];
+		pivot = a_row[r];
+
+		/* Eliminate other rows */
+
+		for (size_t i = 0; i < src->rows; i++) {
+			if (i == r)
+				continue;
+
+			factor = a->data[i][r] / pivot;
+			a_i = a->data[i];
+			inv_i = inv->data[i];
+
+			for (size_t c = 0; c < src->cols; c++) {
+				a_i[c] -= factor * a_row[c];
+				inv_i[c] -= factor * inv_row[c];
+			}
+		}
+
+		/* Normalize pivot row */
+
+		for (size_t c = 0; c < src->cols; c++) {
+			a_row[c] /= pivot;
+			inv_row[c] /= pivot;
+		}
+	}
+
+	fmat_delete(a);
+	return inv;
 }

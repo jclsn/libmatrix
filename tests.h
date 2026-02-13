@@ -76,6 +76,7 @@ void test_fmatrix_subtraction(void **state);
 void test_fmatrix_multiplication(void **state);
 
 void test_fmatrix_transposition(void **state);
+void test_fmatrix_inverse(void **state);
 
 
 #endif /* end of include guard TESTS_H */

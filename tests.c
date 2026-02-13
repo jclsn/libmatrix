@@ -698,3 +698,29 @@ void test_fmatrix_transposition(void **state)
 	fmat_delete(T);
 }
 
+void test_fmatrix_inverse(void **state)
+{
+	(void)state;
+
+	struct fmatrix *A = fmat_alloc(3, 3);
+	fmat_set(A, 0, 0, 2);
+	fmat_set(A, 1, 0, 1);
+	fmat_set(A, 2, 0, 0);
+	fmat_set(A, 0, 1, -1);
+	fmat_set(A, 1, 1, 2);
+	fmat_set(A, 2, 1, -1);
+	fmat_set(A, 0, 2, 0);
+	fmat_set(A, 1, 2, -2);
+	fmat_set(A, 2, 2, 1);
+
+	struct fmatrix *T = fmat_inv(A);
+
+	if (!jl_test_fmat(T, "inv([2. -1. 0.;"
+			     "     1. 2. -2.;"
+			     "     0. -1. 1.])", 1e-12, 1e-12))
+		fail();
+
+	fmat_delete(A);
+	fmat_delete(T);
+}
+

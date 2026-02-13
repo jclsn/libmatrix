@@ -129,6 +129,8 @@ struct fmatrix *fmat_sub(const struct fmatrix *a, const struct fmatrix *b);
 struct fmatrix *fmat_mul(const struct fmatrix *a, const struct fmatrix *b);
 /* Transpose a floating-point matrix */
 struct fmatrix *fmat_trans(const struct fmatrix *m);
+/* Compute the inverse of a floating-point matrix */
+struct fmatrix *fmat_inv(const struct fmatrix *src);
 /* Copy a floating-point matrix */
 void fmat_copy(struct fmatrix *dst, const struct fmatrix *src);
 /* Duplicate a floating-point matrix */
