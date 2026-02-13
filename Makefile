@@ -4,7 +4,7 @@ TARGET = matrix
 IDIR = ./include
 CC = gcc
 
-CFLAGS = -I$(IDIR) -I$(JULIA_DIR)/include -ffast-math
+CFLAGS = -I$(IDIR) -I$(JULIA_DIR)/include/julia -ffast-math
 CFLAGS_DEBUG = -I$(IDIR) -g -O0 -Wall -Wextra -Wpedantic -fsanitize=address,undefined -I$(JULIA_DIR)/include -ffast-math
 LDFLAGS_DEBUG = -fsanitize=address,undefined
 

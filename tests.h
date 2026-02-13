@@ -2,7 +2,7 @@
 
 #define TESTS_H
 
-#include <julia/julia.h>
+#include <julia.h>
 
 #include <stdarg.h>
 #include <stddef.h>
