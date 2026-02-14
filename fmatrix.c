@@ -228,20 +228,7 @@ void fmat_set_row_gf2(struct fmatrix *m, size_t row, unsigned long long bits)
 
 /* ---------------- Operations ---------------- */
 
-void fmat_copy(struct fmatrix *dst, const struct fmatrix *src)
-{
-	if (!src || !dst) {
-		errno = EINVAL;
-		perror(__func__);
-		return;
-	}
-
-	for (size_t r = 0; r < src->rows; r++)
-		for (size_t c = 0; c < src->cols; c++)
-			dst->data[r][c] = src->data[r][c];
-}
-
-struct fmatrix *fmat_dup(const struct fmatrix *src)
+struct fmatrix *fmat_copy(struct fmatrix *dest, const struct fmatrix *src)
 {
 	if (!src) {
 		errno = EINVAL;
@@ -249,17 +236,23 @@ struct fmatrix *fmat_dup(const struct fmatrix *src)
 		return NULL;
 	}
 
-	struct fmatrix *m = fmat_alloc(src->rows, src->cols);
-	if (!m) {
-		perror(__func__);
-		return NULL;
+	if (dest) {
+		if (dest->rows != src->rows || dest->cols != src->cols) {
+			errno = EINVAL;
+			perror(__func__);
+			return NULL;
+		}
+	} else {
+		dest = fmat_alloc(src->rows, src->cols);
+		if (!dest)
+			return NULL;
 	}
 
 	for (size_t r = 0; r < src->rows; r++)
 		for (size_t c = 0; c < src->cols; c++)
-			m->data[r][c] = src->data[r][c];
+			dest->data[r][c] = src->data[r][c];
 
-	return m;
+	return dest;
 }
 
 bool fmat_equal(const struct fmatrix *a, const struct fmatrix *b)
@@ -278,7 +271,7 @@ bool fmat_equal(const struct fmatrix *a, const struct fmatrix *b)
 	return true;
 }
 
-struct fmatrix *fmat_add(const struct fmatrix *a, const struct fmatrix *b)
+struct fmatrix *fmat_add(struct fmatrix *dest, const struct fmatrix *a, const struct fmatrix *b)
 {
 	if (!a || !b || a->rows != b->rows || a->cols != b->cols) {
 		errno = EINVAL;
@@ -286,20 +279,26 @@ struct fmatrix *fmat_add(const struct fmatrix *a, const struct fmatrix *b)
 		return NULL;
 	}
 
-	struct fmatrix *m = fmat_alloc(a->rows, a->cols);
-	if (!m) {
-		perror(__func__);
-		return NULL;
+	if (dest) {
+		if (dest->rows != a->rows || dest->cols != a->cols) {
+			errno = EINVAL;
+			perror(__func__);
+			return NULL;
+		}
+	} else {
+		dest = fmat_alloc(a->rows, a->cols);
+		if (!dest)
+			return NULL;
 	}
 
 	for (size_t r = 0; r < a->rows; r++)
 		for (size_t c = 0; c < a->cols; c++)
-			m->data[r][c] = a->data[r][c] + b->data[r][c];
+			dest->data[r][c] = a->data[r][c] + b->data[r][c];
 
-	return m;
+	return dest;
 }
 
-struct fmatrix *fmat_sub(const struct fmatrix *a, const struct fmatrix *b)
+struct fmatrix *fmat_sub(struct fmatrix *dest, const struct fmatrix *a, const struct fmatrix *b)
 {
 	if (!a || !b || a->rows != b->rows || a->cols != b->cols) {
 		errno = EINVAL;
@@ -307,20 +306,26 @@ struct fmatrix *fmat_sub(const struct fmatrix *a, const struct fmatrix *b)
 		return NULL;
 	}
 
-	struct fmatrix *m = fmat_alloc(a->rows, a->cols);
-	if (!m) {
-		perror(__func__);
-		return NULL;
+	if (dest) {
+		if (dest->rows != a->rows || dest->cols != a->cols) {
+			errno = EINVAL;
+			perror(__func__);
+			return NULL;
+		}
+	} else {
+		dest = fmat_alloc(a->rows, a->cols);
+		if (!dest)
+			return NULL;
 	}
 
 	for (size_t r = 0; r < a->rows; r++)
 		for (size_t c = 0; c < a->cols; c++)
-			m->data[r][c] = a->data[r][c] - b->data[r][c];
+			dest->data[r][c] = a->data[r][c] - b->data[r][c];
 
-	return m;
+	return dest;
 }
 
-struct fmatrix *fmat_mul(const struct fmatrix *a, const struct fmatrix *b)
+struct fmatrix *fmat_mul(struct fmatrix *dest, const struct fmatrix *a, const struct fmatrix *b)
 {
 	if (!a || !b || a->cols != b->rows) {
 		errno = EINVAL;
@@ -328,10 +333,16 @@ struct fmatrix *fmat_mul(const struct fmatrix *a, const struct fmatrix *b)
 		return NULL;
 	}
 
-	struct fmatrix *m = fmat_alloc(a->rows, b->cols);
-	if (!m) {
-		perror(__func__);
-		return NULL;
+	if (dest) {
+		if (dest->rows != a->rows || dest->cols != b->cols) {
+			errno = EINVAL;
+			perror(__func__);
+			return NULL;
+		}
+	} else {
+		dest = fmat_alloc(a->rows, b->cols);
+		if (!dest)
+			return NULL;
 	}
 
 	for (size_t i = 0; i < a->rows; i++) {
@@ -339,14 +350,14 @@ struct fmatrix *fmat_mul(const struct fmatrix *a, const struct fmatrix *b)
 			fval_t sum = 0;
 			for (size_t k = 0; k < a->cols; k++)
 				sum += a->data[i][k] * b->data[k][j];
-			m->data[i][j] = sum;
+			dest->data[i][j] = sum;
 		}
 	}
 
-	return m;
+	return dest;
 }
 
-struct fmatrix *fmat_trans(const struct fmatrix *src)
+struct fmatrix *fmat_trans(struct fmatrix *dest, const struct fmatrix *src)
 {
 	if (!src) {
 		errno = EINVAL;
@@ -354,20 +365,26 @@ struct fmatrix *fmat_trans(const struct fmatrix *src)
 		return NULL;
 	}
 
-	struct fmatrix *m = fmat_alloc(src->cols, src->rows);
-	if (!m) {
-		perror(__func__);
-		return NULL;
+	if (dest) {
+		if (dest->rows != src->cols || dest->cols != src->rows) {
+			errno = EINVAL;
+			perror(__func__);
+			return NULL;
+		}
+	} else {
+		dest = fmat_alloc(src->cols, src->rows);
+		if (!dest)
+			return NULL;
 	}
 
 	for (size_t r = 0; r < src->rows; r++)
 		for (size_t c = 0; c < src->cols; c++)
-			m->data[c][r] = src->data[r][c];
+			dest->data[c][r] = src->data[r][c];
 
-	return m;
+	return dest;
 }
 
-struct fmatrix *fmat_inv(const struct fmatrix *src)
+struct fmatrix *fmat_inv(struct fmatrix *dest, const struct fmatrix *src)
 {
 	if (!src || src->rows != src->cols) {
 		errno = EINVAL;
@@ -375,16 +392,22 @@ struct fmatrix *fmat_inv(const struct fmatrix *src)
 		return NULL;
 	}
 
-	struct fmatrix *inv = fmat_alloc(src->rows, src->cols);
-	if (!inv) {
-		perror(__func__);
-		return NULL;
+	if (dest) {
+		if (dest->rows != src->rows || dest->cols != src->cols) {
+			errno = EINVAL;
+			perror(__func__);
+			return NULL;
+		}
+	} else {
+		dest = fmat_alloc(src->rows, src->cols);
+		if (!dest)
+			return NULL;
 	}
 
-	struct fmatrix *a = fmat_alloc(src->rows, src->cols);
-	if (!a) {
+	struct fmatrix *tmp_mat = fmat_alloc(src->rows, src->cols);
+	if (!tmp_mat) {
 		perror(__func__);
-		fmat_delete(inv);
+		fmat_delete(dest);
 		return NULL;
 	}
 
@@ -401,8 +424,8 @@ struct fmatrix *fmat_inv(const struct fmatrix *src)
 
 	for (size_t r = 0; r < src->rows; r++)
 		for (size_t c = 0; c < src->cols; c++) {
-			a->data[r][c] = (double)src->data[r][c];
-			inv->data[r][c] = (r == c) ? 1.0 : 0.0;
+			tmp_mat->data[r][c] = (double)src->data[r][c];
+			dest->data[r][c] = (r == c) ? 1.0 : 0.0;
 		}
 
 	for (size_t r = 0; r < src->rows; r++) {
@@ -411,13 +434,13 @@ struct fmatrix *fmat_inv(const struct fmatrix *src)
 		max_row = r;
 
 		for (size_t i = r; i < src->rows; i++)
-			if (fabs(a->data[i][r]) > fabs(a->data[max_row][r]))
+			if (fabs(tmp_mat->data[i][r]) > fabs(tmp_mat->data[max_row][r]))
 				max_row = i;
 
-		if (fabs(a->data[max_row][r]) < 1e-12) {
+		if (fabs(tmp_mat->data[max_row][r]) < 1e-12) {
 			fprintf(stderr, "%s: matrix is singular\n", __func__);
-			fmat_delete(a);
-			fmat_delete(inv);
+			fmat_delete(tmp_mat);
+			fmat_delete(dest);
 			return NULL;
 		}
 
@@ -425,19 +448,19 @@ struct fmatrix *fmat_inv(const struct fmatrix *src)
 
 		if (max_row != r)
 			for (size_t c = 0; c < src->cols; c++) {
-				tmp = a->data[r][c];
-				a->data[r][c] = a->data[max_row][c];
-				a->data[max_row][c] = tmp;
+				tmp = tmp_mat->data[r][c];
+				tmp_mat->data[r][c] = tmp_mat->data[max_row][c];
+				tmp_mat->data[max_row][c] = tmp;
 
-				tmp = inv->data[r][c];
-				inv->data[r][c] = inv->data[max_row][c];
-				inv->data[max_row][c] = tmp;
+				tmp = dest->data[r][c];
+				dest->data[r][c] = dest->data[max_row][c];
+				dest->data[max_row][c] = tmp;
 			}
 
 		/* Cache pivot row */
 
-		a_row = a->data[r];
-		inv_row = inv->data[r];
+		a_row = tmp_mat->data[r];
+		inv_row = dest->data[r];
 		pivot = a_row[r];
 
 		/* Eliminate other rows */
@@ -446,9 +469,9 @@ struct fmatrix *fmat_inv(const struct fmatrix *src)
 			if (i == r)
 				continue;
 
-			factor = a->data[i][r] / pivot;
-			a_i = a->data[i];
-			inv_i = inv->data[i];
+			factor = tmp_mat->data[i][r] / pivot;
+			a_i = tmp_mat->data[i];
+			inv_i = dest->data[i];
 
 			for (size_t c = 0; c < src->cols; c++) {
 				a_i[c] -= factor * a_row[c];
@@ -464,8 +487,9 @@ struct fmatrix *fmat_inv(const struct fmatrix *src)
 		}
 	}
 
-	fmat_delete(a);
-	return inv;
+	fmat_delete(tmp_mat);
+
+	return dest;
 }
 
 struct fmatrix *fmat_set_string(const char *str)

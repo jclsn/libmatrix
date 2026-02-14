@@ -124,19 +124,17 @@ void fmat_set_row_gf2(struct fmatrix *m, size_t row, unsigned long long bits);
 void fmat_print(struct fmatrix *m);
 
 /* Add two floating-point matrices */
-struct fmatrix *fmat_add(const struct fmatrix *a, const struct fmatrix *b);
+struct fmatrix *fmat_add(struct fmatrix *dest, const struct fmatrix *a, const struct fmatrix *b);
 /* Subtract two floating-point matrices */
-struct fmatrix *fmat_sub(const struct fmatrix *a, const struct fmatrix *b);
+struct fmatrix *fmat_sub(struct fmatrix *dest, const struct fmatrix *a, const struct fmatrix *b);
 /* Multiply two floating-point matrices */
-struct fmatrix *fmat_mul(const struct fmatrix *a, const struct fmatrix *b);
+struct fmatrix *fmat_mul(struct fmatrix *dest, const struct fmatrix *a, const struct fmatrix *b);;
 /* Transpose a floating-point matrix */
-struct fmatrix *fmat_trans(const struct fmatrix *m);
+struct fmatrix *fmat_trans(struct fmatrix *dest, const struct fmatrix *src);
 /* Compute the inverse of a floating-point matrix */
-struct fmatrix *fmat_inv(const struct fmatrix *src);
+struct fmatrix *fmat_inv(struct fmatrix *dest, const struct fmatrix *src);
 /* Copy a floating-point matrix */
-void fmat_copy(struct fmatrix *dst, const struct fmatrix *src);
-/* Duplicate a floating-point matrix */
-struct fmatrix *fmat_dup(const struct fmatrix *src);
+struct fmatrix *fmat_copy(struct fmatrix *dest, const struct fmatrix *src);
 
 /* Compare two floating-point matrices */
 bool fmat_equal(const struct fmatrix *a, const struct fmatrix *b);

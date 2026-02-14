@@ -124,17 +124,15 @@ void mat_set_row_gf2(struct matrix *m, size_t row, unsigned long long bits);
 void mat_print(struct matrix *m);
 
 /* Add two matrices */
-struct matrix *mat_add(const struct matrix *a, const struct matrix *b);
+struct matrix *mat_add(struct matrix *dest, const struct matrix *a, const struct matrix *b);
 /* Subtract two matrices */
-struct matrix *mat_sub(const struct matrix *a, const struct matrix *b);
+struct matrix *mat_sub(struct matrix *dest, const struct matrix *a, const struct matrix *b);
 /* Multiply two matrices */
-struct matrix *mat_mul(const struct matrix *a, const struct matrix *b);
+struct matrix *mat_mul(struct matrix *dest, const struct matrix *a, const struct matrix *b);
 /* Transpose a matrix */
-struct matrix *mat_trans(const struct matrix *m);
+struct matrix *mat_trans(struct matrix *dest, const struct matrix *src);
 /* Copy a matrix */
-void mat_copy(struct matrix *dst, const struct matrix *src);
-/* Duplicate a matrix */
-struct matrix *mat_dup(const struct matrix *src);
+struct matrix *mat_copy(struct matrix *dest, const struct matrix *src);
 
 /* Compare two matrices */
 bool mat_equal(const struct matrix *a, const struct matrix *b);
