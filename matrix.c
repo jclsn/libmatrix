@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <errno.h>
 #include <math.h>
 #include <stdlib.h>
@@ -363,6 +364,102 @@ struct matrix *mat_trans(const struct matrix *src)
 	for (size_t r = 0; r < src->rows; r++)
 		for (size_t c = 0; c < src->cols; c++)
 			m->data[c][r] = src->data[r][c];
+
+	return m;
+}
+
+struct matrix *mat_set_string(const char *str)
+{
+	if (!str) {
+		errno = EINVAL;
+		perror(__func__);
+		return NULL;
+	}
+
+	/* Count rows and columns */
+
+	size_t current_cols = 0;
+	const char *p = str;
+	int in_number = 0;
+	size_t rows = 0;
+	size_t cols = 0;
+	size_t r = 0;
+	size_t c = 0;
+	char *endptr;
+
+	while (*p) {
+		if (isdigit(*p) || *p == '.' || *p == '-' || *p == '+') {
+			if (!in_number) {
+				in_number = 1;
+				current_cols++;
+			}
+		} else {
+			in_number = 0;
+			if (*p == ';') {
+				if (cols == 0)
+					cols = current_cols;
+				else if (current_cols != cols) {
+					fprintf(stderr,
+						"%s: Inconsistent number of columns\n",
+						__func__);
+					return NULL;
+				}
+				rows++;
+				current_cols = 0;
+			}
+		}
+		p++;
+	}
+	if (current_cols > 0) {
+		if (cols == 0)
+			cols = current_cols;
+		else if (current_cols != cols) {
+			fprintf(stderr, "%s: Inconsistent number of columns\n", __func__);
+			return NULL;
+		}
+		rows++;
+	}
+
+	struct matrix *m = mat_alloc(rows, cols);
+	if (!m) {
+		perror(__func__);
+		return NULL;
+	}
+
+	p = str; /* Parse numbers into the matrix */
+
+	while (*p && r < rows) {
+
+		/* Skip non-numeric, non-minus/plus characters except row separator ; */
+
+		while (*p && !isdigit(*p) && *p != '.' && *p != '-' && *p != '+' && *p != ';')
+			p++;
+
+		if (!*p)
+			break;
+		if (*p == ';') {
+			r++;
+			c = 0;
+			p++;
+			continue;
+		}
+
+		val_t val = strtod(p, &endptr);
+		if (endptr == p) {
+			fprintf(stderr, "%s: Failed to parse number near '%s'\n", __func__, p);
+			mat_delete(m);
+			return NULL;
+		}
+
+		if (c >= cols) {
+			fprintf(stderr, "%s: Too many columns in row %zu\n", __func__, r);
+			mat_delete(m);
+			return NULL;
+		}
+
+		m->data[r][c++] = val;
+		p = endptr;
+	}
 
 	return m;
 }

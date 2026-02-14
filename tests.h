@@ -36,6 +36,7 @@ void test_matrix_set_identity(void **state);
 void test_matrix_identity_new(void **state);
 void test_matrix_set_and_reset(void **state);
 void test_matrix_set_row_gf2(void **state);
+void test_matrix_set_string(void **state);
 
 void test_matrix_shift_east(void **state);
 void test_matrix_shift_west(void **state);
@@ -62,6 +63,7 @@ void test_fmatrix_set_identity(void **state);
 void test_fmatrix_identity_new(void **state);
 void test_fmatrix_set_and_reset(void **state);
 void test_fmatrix_set_row_gf2(void **state);
+void test_fmatrix_set_string(void **state);
 
 void test_fmatrix_shift_east(void **state);
 void test_fmatrix_shift_west(void **state);

@@ -1,3 +1,4 @@
+#include "fmatrix.h"
 #include "matrix.h"
 #include "tests.h"
 
@@ -20,6 +21,7 @@ int main(void)
 		cmocka_unit_test(test_matrix_set_identity),
 		cmocka_unit_test(test_matrix_identity_new),
 
+		cmocka_unit_test(test_matrix_set_string),
 		cmocka_unit_test(test_matrix_set_and_reset),
 		cmocka_unit_test(test_matrix_set_row_gf2),
 
@@ -48,6 +50,7 @@ int main(void)
 		cmocka_unit_test(test_fmatrix_set_identity),
 		cmocka_unit_test(test_fmatrix_identity_new),
 
+		cmocka_unit_test(test_fmatrix_set_string),
 		cmocka_unit_test(test_fmatrix_set_and_reset),
 		cmocka_unit_test(test_fmatrix_set_row_gf2),
 

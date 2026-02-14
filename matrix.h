@@ -98,6 +98,8 @@ void mat_delete(struct matrix *m);
 void mat_set_identity(struct matrix *m);
 /* Allocate a new identity matrix */
 struct matrix *mat_identity_new(const size_t dims);
+/* Allocate a new matrix from string input */
+struct matrix *mat_set_string(const char *str);
 
 /* Shift all fields of the matrix up */
 void mat_shift_north(struct matrix *m, size_t nshifts);

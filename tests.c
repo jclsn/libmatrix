@@ -252,6 +252,18 @@ void test_matrix_set_row_gf2(void **state)
 	mat_delete(A);
 }
 
+void test_matrix_set_string(void **state)
+{
+	(void)state;
+
+	struct matrix *A = mat_set_string("[1 0 0; 0 1 0; 0 0 1]");
+
+	if (!jl_test_mat(A, "[1 0 0; 0 1 0; 0 0 1]"))
+		fail();
+
+	mat_delete(A);
+}
+
 void test_matrix_shift_east(void **state)
 {
 	(void)state;
@@ -543,6 +555,18 @@ void test_fmatrix_set_row_gf2(void **state)
 	fmat_delete(A);
 }
 
+void test_fmatrix_set_string(void **state)
+{
+	(void)state;
+
+	struct fmatrix *A = fmat_set_string("[1. 0. 0.; 0. 1. 0.; 0. 0. 1.]");
+
+	if (!jl_test_fmat(A, "[1. 0. 0.; 0. 1. 0.; 0. 0. 1.]", 1e-12, 1e-12))
+		fail();
+
+	fmat_delete(A);
+}
+
 void test_fmatrix_shift_east(void **state)
 {
 	(void)state;
@@ -715,12 +739,14 @@ void test_fmatrix_inverse(void **state)
 
 	struct fmatrix *T = fmat_inv(A);
 
-	if (!jl_test_fmat(T, "inv([2. -1. 0.;"
-			     "     1. 2. -2.;"
-			     "     0. -1. 1.])", 1e-12, 1e-12))
+	if (!jl_test_fmat(T,
+			  "inv([2. -1. 0.;"
+			  "     1. 2. -2.;"
+			  "     0. -1. 1.])",
+			  1e-12,
+			  1e-12))
 		fail();
 
 	fmat_delete(A);
 	fmat_delete(T);
 }
-

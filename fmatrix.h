@@ -98,6 +98,8 @@ void fmat_delete(struct fmatrix *m);
 void fmat_set_identity(struct fmatrix *m);
 /* Allocate a new identity floating-point matrix */
 struct fmatrix *fmat_identity_new(const size_t dims);
+/* Allocate a new floating-point matrix from string input */
+struct fmatrix *fmat_set_string(const char *str);
 
 /* Shift all fields of the floating-point matrix up */
 void fmat_shift_north(struct fmatrix *m, size_t nshifts);
