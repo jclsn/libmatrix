@@ -4,13 +4,13 @@
 
 #include <julia.h>
 
+#include <cmocka.h>
 #include <stdarg.h>
 #include <stddef.h>
-#include <cmocka.h>
 
-#include "fmatrix.h"
-#include "format.h"
-#include "matrix.h"
+#include "../fmatrix.h"
+#include "../format.h"
+#include "../matrix.h"
 
 #define TEST(...)                                                                 \
 	do {                                                                      \
@@ -79,6 +79,5 @@ void test_fmatrix_multiplication(void **state);
 
 void test_fmatrix_transposition(void **state);
 void test_fmatrix_inverse(void **state);
-
 
 #endif /* end of include guard TESTS_H */

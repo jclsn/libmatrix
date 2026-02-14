@@ -10,8 +10,8 @@ static void mat_to_julia_matrix(const struct matrix *m, const char *julia_name)
 
 	pos += snprintf(buf + pos, sizeof(buf) - pos, "%s = reshape([", julia_name);
 
-	for (int c = 0; c < m->cols; c++) {
-		for (int r = 0; r < m->rows; r++) {
+	for (size_t c = 0; c < m->cols; c++) {
+		for (size_t r = 0; r < m->rows; r++) {
 			pos += snprintf(buf + pos, sizeof(buf) - pos, "%lld", m->data[r][c]);
 			if (r != m->rows - 1 || c != m->cols - 1)
 				pos += snprintf(buf + pos, sizeof(buf) - pos, ", ");
@@ -70,8 +70,8 @@ static void fmat_to_julia_matrix(const struct fmatrix *m, const char *julia_name
 
 	pos += snprintf(buf + pos, sizeof(buf) - pos, "%s = reshape(Float64[", julia_name);
 
-	for (int c = 0; c < m->cols; c++) {
-		for (int r = 0; r < m->rows; r++) {
+	for (size_t c = 0; c < m->cols; c++) {
+		for (size_t r = 0; r < m->rows; r++) {
 			pos += snprintf(buf + pos, sizeof(buf) - pos, "%.17g", m->data[r][c]);
 			if (r != m->rows - 1 || c != m->cols - 1)
 				pos += snprintf(buf + pos, sizeof(buf) - pos, ", ");
@@ -173,7 +173,7 @@ void test_matrix_heap_multiplication(void **state)
 	mat_set(B, 1, 0, 1);
 	mat_set(B, 2, 0, 1);
 
-	struct matrix *C = mat_mul(A, B);
+	struct matrix *C = mat_mul(NULL, A, B);
 
 	if (!jl_test_mat(C, "[1 1 1; 0 0 0; 0 0 0]*[1 0 0; 1 0 0; 1 0 0]")) {
 		fail();
@@ -189,7 +189,7 @@ void test_matrix_alloc_valid(void **state)
 	assert_int_equal(A->rows, 2);
 	assert_int_equal(A->cols, 3);
 
-	mat_delete(A);
+	mat_free(A);
 }
 
 void test_matrix_alloc_invalid_dims(void **state)
@@ -210,7 +210,7 @@ void test_matrix_set_identity(void **state)
 	if (!jl_test_mat(A, "[1 0 0; 0 1 0; 0 0 1]"))
 		fail();
 
-	mat_delete(A);
+	mat_free(A);
 }
 
 void test_matrix_identity_new(void **state)
@@ -222,7 +222,7 @@ void test_matrix_identity_new(void **state)
 	if (!jl_test_mat(A, "[1 0 0; 0 1 0; 0 0 1]"))
 		fail();
 
-	mat_delete(A);
+	mat_free(A);
 }
 
 void test_matrix_set_and_reset(void **state)
@@ -236,7 +236,7 @@ void test_matrix_set_and_reset(void **state)
 	if (!jl_test_mat(A, "[0 0 0; 0 0 0]"))
 		fail();
 
-	mat_delete(A);
+	mat_free(A);
 }
 
 void test_matrix_set_row_gf2(void **state)
@@ -249,7 +249,7 @@ void test_matrix_set_row_gf2(void **state)
 	if (!jl_test_mat(A, "[1 0 1 0]"))
 		fail();
 
-	mat_delete(A);
+	mat_free(A);
 }
 
 void test_matrix_set_string(void **state)
@@ -261,7 +261,7 @@ void test_matrix_set_string(void **state)
 	if (!jl_test_mat(A, "[1 0 0; 0 1 0; 0 0 1]"))
 		fail();
 
-	mat_delete(A);
+	mat_free(A);
 }
 
 void test_matrix_shift_east(void **state)
@@ -276,7 +276,7 @@ void test_matrix_shift_east(void **state)
 	if (!jl_test_mat(A, "[0 0 1 1]"))
 		fail();
 
-	mat_delete(A);
+	mat_free(A);
 }
 
 void test_matrix_shift_west(void **state)
@@ -291,7 +291,7 @@ void test_matrix_shift_west(void **state)
 	if (!jl_test_mat(A, "[1 1 0 0]"))
 		fail();
 
-	mat_delete(A);
+	mat_free(A);
 }
 
 void test_matrix_shift_north(void **state)
@@ -306,7 +306,7 @@ void test_matrix_shift_north(void **state)
 	if (!jl_test_mat(A, "[0; 1; 0;;]"))
 		fail();
 
-	mat_delete(A);
+	mat_free(A);
 }
 
 void test_matrix_shift_south(void **state)
@@ -321,7 +321,7 @@ void test_matrix_shift_south(void **state)
 	if (!jl_test_mat(A, "[0; 1; 0;;]"))
 		fail();
 
-	mat_delete(A);
+	mat_free(A);
 }
 
 void test_matrix_copy(void **state)
@@ -335,8 +335,8 @@ void test_matrix_copy(void **state)
 
 	assert_true(mat_equal(A, B));
 
-	mat_delete(A);
-	mat_delete(B);
+	mat_free(A);
+	mat_free(B);
 }
 
 void test_matrix_duplication(void **state)
@@ -344,12 +344,12 @@ void test_matrix_duplication(void **state)
 	(void)state;
 
 	struct matrix *A = mat_identity_new(2);
-	struct matrix *B = mat_dup(A);
+	struct matrix *B = mat_copy(NULL, A);
 
 	assert_true(mat_equal(A, B));
 
-	mat_delete(A);
-	mat_delete(B);
+	mat_free(A);
+	mat_free(B);
 }
 
 void test_matrix_addition(void **state)
@@ -359,14 +359,14 @@ void test_matrix_addition(void **state)
 	struct matrix *A = mat_identity_new(2);
 	struct matrix *B = mat_identity_new(2);
 
-	struct matrix *C = mat_add(A, B);
+	struct matrix *C = mat_add(NULL, A, B);
 
 	if (!jl_test_mat(C, "[2 0; 0 2]"))
 		fail();
 
-	mat_delete(A);
-	mat_delete(B);
-	mat_delete(C);
+	mat_free(A);
+	mat_free(B);
+	mat_free(C);
 }
 
 void test_matrix_subtraction(void **state)
@@ -376,14 +376,14 @@ void test_matrix_subtraction(void **state)
 	struct matrix *A = mat_identity_new(2);
 	struct matrix *B = mat_identity_new(2);
 
-	struct matrix *C = mat_sub(A, B);
+	struct matrix *C = mat_sub(NULL, A, B);
 
 	if (!jl_test_mat(C, "[0 0; 0 0]"))
 		fail();
 
-	mat_delete(A);
-	mat_delete(B);
-	mat_delete(C);
+	mat_free(A);
+	mat_free(B);
+	mat_free(C);
 }
 
 void test_matrix_multiplication(void **state)
@@ -393,13 +393,13 @@ void test_matrix_multiplication(void **state)
 	struct matrix *A = mat_identity_new(3);
 	struct matrix *B = mat_identity_new(3);
 
-	struct matrix *C = mat_mul(A, B);
+	struct matrix *C = mat_mul(NULL, A, B);
 
 	assert_true(mat_equal(A, C));
 
-	mat_delete(A);
-	mat_delete(B);
-	mat_delete(C);
+	mat_free(A);
+	mat_free(B);
+	mat_free(C);
 }
 
 void test_matrix_transposition(void **state)
@@ -410,13 +410,13 @@ void test_matrix_transposition(void **state)
 	mat_set(A, 0, 1, 1);
 	mat_set(A, 1, 2, 1);
 
-	struct matrix *T = mat_trans(A);
+	struct matrix *T = mat_trans(NULL, A);
 
 	if (!jl_test_mat(T, "[0 0; 1 0; 0 1]"))
 		fail();
 
-	mat_delete(A);
-	mat_delete(T);
+	mat_free(A);
+	mat_free(T);
 }
 
 /*
@@ -468,7 +468,7 @@ void test_fmatrix_heap_multiplication(void **state)
 	fmat_set(B, 1, 0, 1);
 	fmat_set(B, 2, 0, 1);
 
-	struct fmatrix *C = fmat_mul(A, B);
+	struct fmatrix *C = fmat_mul(NULL, A, B);
 
 	if (!jl_test_fmat(C,
 			  "[1. 1. 1.;"
@@ -492,7 +492,7 @@ void test_fmatrix_alloc_valid(void **state)
 	assert_int_equal(A->rows, 2);
 	assert_int_equal(A->cols, 3);
 
-	fmat_delete(A);
+	fmat_free(A);
 }
 
 void test_fmatrix_alloc_invalid_dims(void **state)
@@ -513,7 +513,7 @@ void test_fmatrix_set_identity(void **state)
 	if (!jl_test_fmat(A, "[1. 0. 0.; 0. 1. 0.; 0. 0. 1.]", 1e-12, 1e-12))
 		fail();
 
-	fmat_delete(A);
+	fmat_free(A);
 }
 
 void test_fmatrix_identity_new(void **state)
@@ -525,7 +525,7 @@ void test_fmatrix_identity_new(void **state)
 	if (!jl_test_fmat(A, "[1. 0. 0.; 0. 1. 0.; 0. 0. 1.]", 1e-12, 1e-12))
 		fail();
 
-	fmat_delete(A);
+	fmat_free(A);
 }
 
 void test_fmatrix_set_and_reset(void **state)
@@ -539,7 +539,7 @@ void test_fmatrix_set_and_reset(void **state)
 	if (!jl_test_fmat(A, "[0. 0. 0.; 0. 0. 0]", 1e-12, 1e-12))
 		fail();
 
-	fmat_delete(A);
+	fmat_free(A);
 }
 
 void test_fmatrix_set_row_gf2(void **state)
@@ -552,7 +552,7 @@ void test_fmatrix_set_row_gf2(void **state)
 	if (!jl_test_fmat(A, "[1. 0. 1. 0]", 1e-12, 1e-12))
 		fail();
 
-	fmat_delete(A);
+	fmat_free(A);
 }
 
 void test_fmatrix_set_string(void **state)
@@ -564,7 +564,7 @@ void test_fmatrix_set_string(void **state)
 	if (!jl_test_fmat(A, "[1. 0. 0.; 0. 1. 0.; 0. 0. 1.]", 1e-12, 1e-12))
 		fail();
 
-	fmat_delete(A);
+	fmat_free(A);
 }
 
 void test_fmatrix_shift_east(void **state)
@@ -579,7 +579,7 @@ void test_fmatrix_shift_east(void **state)
 	if (!jl_test_fmat(A, "[0. 0. 1. 1.]", 1e-12, 1e-12))
 		fail();
 
-	fmat_delete(A);
+	fmat_free(A);
 }
 
 void test_fmatrix_shift_west(void **state)
@@ -594,7 +594,7 @@ void test_fmatrix_shift_west(void **state)
 	if (!jl_test_fmat(A, "[1. 1. 0. 0.]", 1e-12, 1e-12))
 		fail();
 
-	fmat_delete(A);
+	fmat_free(A);
 }
 
 void test_fmatrix_shift_north(void **state)
@@ -609,7 +609,7 @@ void test_fmatrix_shift_north(void **state)
 	if (!jl_test_fmat(A, "[0.; 1.; 0.;;]", 1e-12, 1e-12))
 		fail();
 
-	fmat_delete(A);
+	fmat_free(A);
 }
 
 void test_fmatrix_shift_south(void **state)
@@ -624,7 +624,7 @@ void test_fmatrix_shift_south(void **state)
 	if (!jl_test_fmat(A, "[0.; 1.; 0.;;]", 1e-12, 1e-12))
 		fail();
 
-	fmat_delete(A);
+	fmat_free(A);
 }
 
 void test_fmatrix_copy(void **state)
@@ -638,8 +638,8 @@ void test_fmatrix_copy(void **state)
 
 	assert_true(fmat_equal(A, B));
 
-	fmat_delete(A);
-	fmat_delete(B);
+	fmat_free(A);
+	fmat_free(B);
 }
 
 void test_fmatrix_duplication(void **state)
@@ -647,12 +647,12 @@ void test_fmatrix_duplication(void **state)
 	(void)state;
 
 	struct fmatrix *A = fmat_identity_new(2);
-	struct fmatrix *B = fmat_dup(A);
+	struct fmatrix *B = fmat_copy(NULL, A);
 
 	assert_true(fmat_equal(A, B));
 
-	fmat_delete(A);
-	fmat_delete(B);
+	fmat_free(A);
+	fmat_free(B);
 }
 
 void test_fmatrix_addition(void **state)
@@ -662,14 +662,14 @@ void test_fmatrix_addition(void **state)
 	struct fmatrix *A = fmat_identity_new(2);
 	struct fmatrix *B = fmat_identity_new(2);
 
-	struct fmatrix *C = fmat_add(A, B);
+	struct fmatrix *C = fmat_add(NULL, A, B);
 
 	if (!jl_test_fmat(C, "[2. 0.; 0. 2.]", 1e-12, 1e-12))
 		fail();
 
-	fmat_delete(A);
-	fmat_delete(B);
-	fmat_delete(C);
+	fmat_free(A);
+	fmat_free(B);
+	fmat_free(C);
 }
 
 void test_fmatrix_subtraction(void **state)
@@ -679,14 +679,14 @@ void test_fmatrix_subtraction(void **state)
 	struct fmatrix *A = fmat_identity_new(2);
 	struct fmatrix *B = fmat_identity_new(2);
 
-	struct fmatrix *C = fmat_sub(A, B);
+	struct fmatrix *C = fmat_sub(NULL, A, B);
 
 	if (!jl_test_fmat(C, "[0. 0.; 0. 0.]", 1e-12, 1e-12))
 		fail();
 
-	fmat_delete(A);
-	fmat_delete(B);
-	fmat_delete(C);
+	fmat_free(A);
+	fmat_free(B);
+	fmat_free(C);
 }
 
 void test_fmatrix_multiplication(void **state)
@@ -696,13 +696,13 @@ void test_fmatrix_multiplication(void **state)
 	struct fmatrix *A = fmat_identity_new(3);
 	struct fmatrix *B = fmat_identity_new(3);
 
-	struct fmatrix *C = fmat_mul(A, B);
+	struct fmatrix *C = fmat_mul(NULL, A, B);
 
 	assert_true(fmat_equal(A, C));
 
-	fmat_delete(A);
-	fmat_delete(B);
-	fmat_delete(C);
+	fmat_free(A);
+	fmat_free(B);
+	fmat_free(C);
 }
 
 void test_fmatrix_transposition(void **state)
@@ -713,13 +713,13 @@ void test_fmatrix_transposition(void **state)
 	fmat_set(A, 0, 1, 1);
 	fmat_set(A, 1, 2, 1);
 
-	struct fmatrix *T = fmat_trans(A);
+	struct fmatrix *T = fmat_trans(NULL, A);
 
 	if (!jl_test_fmat(T, "[0. 0.; 1. 0.; 0. 1.]", 1e-12, 1e-12))
 		fail();
 
-	fmat_delete(A);
-	fmat_delete(T);
+	fmat_free(A);
+	fmat_free(T);
 }
 
 void test_fmatrix_inverse(void **state)
@@ -737,7 +737,7 @@ void test_fmatrix_inverse(void **state)
 	fmat_set(A, 1, 2, -2);
 	fmat_set(A, 2, 2, 1);
 
-	struct fmatrix *T = fmat_inv(A);
+	struct fmatrix *T = fmat_inv(NULL, A);
 
 	if (!jl_test_fmat(T,
 			  "inv([2. -1. 0.;"
@@ -747,6 +747,6 @@ void test_fmatrix_inverse(void **state)
 			  1e-12))
 		fail();
 
-	fmat_delete(A);
-	fmat_delete(T);
+	fmat_free(A);
+	fmat_free(T);
 }
