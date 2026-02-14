@@ -1,6 +1,5 @@
 #include <ctype.h>
 #include <errno.h>
-#include <math.h>
 #include <stdlib.h>
 
 #include "matrix.h"
@@ -13,7 +12,7 @@ struct matrix *mat_alloc(const size_t rows, const size_t cols)
 		return NULL;
 	}
 
-	ssize_t row;
+	size_t row;
 
 	/* Allocate the struct */
 	struct matrix *m = malloc(sizeof(struct matrix));
@@ -45,9 +44,10 @@ struct matrix *mat_alloc(const size_t rows, const size_t cols)
 	return m;
 
 error_columns:
-	row--;
-	for (; row >= 0; row--)
+	while (row > 0) {
+		row--;
 		free(m->data[row]);
+	}
 
 	free(m->data);
 error_rows:
@@ -167,9 +167,9 @@ void mat_shift_north(struct matrix *m, size_t nshifts)
 		return;
 	}
 
-	for (int r = 0; r < m->rows; r++) {
-		int src = r + nshifts;
-		for (int c = 0; c < m->cols; c++) {
+	for (size_t r = 0; r < m->rows; r++) {
+		size_t src = r + nshifts;
+		for (size_t c = 0; c < m->cols; c++) {
 			m->data[r][c] = (src < m->rows) ? m->data[src][c] : 0;
 		}
 	}
@@ -223,7 +223,7 @@ void mat_set_row_gf2(struct matrix *m, size_t row, unsigned long long bits)
 		return;
 	}
 
-	for (int col = 0; col < m->cols; col++)
+	for (size_t col = 0; col < m->cols; col++)
 		mat_set(m, row, col, (bits >> ((m->cols - 1) - col) & 0x1));
 }
 
@@ -429,7 +429,6 @@ struct matrix *mat_set_string(const char *str)
 	p = str; /* Parse numbers into the matrix */
 
 	while (*p && r < rows) {
-
 		/* Skip non-numeric, non-minus/plus characters except row separator ; */
 
 		while (*p && !isdigit(*p) && *p != '.' && *p != '-' && *p != '+' && *p != ';')

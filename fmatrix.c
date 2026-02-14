@@ -222,7 +222,7 @@ void fmat_set_row_gf2(struct fmatrix *m, size_t row, unsigned long long bits)
 		return;
 	}
 
-	for (int col = 0; col < m->cols; col++)
+	for (size_t col = 0; col < m->cols; col++)
 		fmat_set(m, row, col, (bits >> ((m->cols - 1) - col) & 0x1));
 }
 
@@ -406,7 +406,6 @@ struct fmatrix *fmat_inv(const struct fmatrix *src)
 		}
 
 	for (size_t r = 0; r < src->rows; r++) {
-
 		/* Pivot search */
 
 		max_row = r;
@@ -478,13 +477,13 @@ struct fmatrix *fmat_set_string(const char *str)
 	}
 
 	/* Count rows and columns */
-       	size_t current_cols = 0;
+	size_t current_cols = 0;
 	const char *p = str;
 	int in_number = 0;
 	size_t rows = 0;
 	size_t cols = 0;
 	size_t r = 0;
-        size_t c = 0;
+	size_t c = 0;
 	char *endptr;
 
 	while (*p) {
@@ -529,7 +528,6 @@ struct fmatrix *fmat_set_string(const char *str)
 	p = str; /* Parse numbers into the matrix */
 
 	while (*p && r < rows) {
-
 		/* Skip non-numeric, non-minus/plus characters except row separator ; */
 
 		while (*p && !isdigit(*p) && *p != '.' && *p != '-' && *p != '+' && *p != ';')
