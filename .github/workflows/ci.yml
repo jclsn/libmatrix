@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:           # Run on any push
+  pull_request:   # Run on PRs targeting any branch
+    branches:
+      - '**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential valgrind libcmocka0 libcmocka-dev
+
+      - name: Setup Julia
+        uses: julia-actions/setup-julia@v1
+        with:
+          version: '1.12.5'   # or whatever version you need
+
+      - name: Compile Default Target
+        run: |
+          make clean
+          make main
+
+      - name: Run Valgrind on Default Target
+        run: |
+          valgrind --leak-check=full ./main
+
+      - name: Compile Tests Target
+        run: |
+          make clean
+          make tests
+
+      - name: Run Tests
+        run: |
+          ./run_tests
+
