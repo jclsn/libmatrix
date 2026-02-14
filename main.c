@@ -6,7 +6,7 @@ int main()
 
 	mat_set_identity(A);
 	mat_print(A);
-	mat_delete(A);
+	mat_free(A);
 
 	return 0;
 }

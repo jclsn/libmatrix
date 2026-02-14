@@ -57,7 +57,7 @@ error:
 	return NULL;
 }
 
-void fmat_delete(struct fmatrix *m)
+void fmat_free(struct fmatrix *m)
 {
 	if (!m)
 		return;
@@ -407,7 +407,7 @@ struct fmatrix *fmat_inv(struct fmatrix *dest, const struct fmatrix *src)
 	struct fmatrix *tmp_mat = fmat_alloc(src->rows, src->cols);
 	if (!tmp_mat) {
 		perror(__func__);
-		fmat_delete(dest);
+		fmat_free(dest);
 		return NULL;
 	}
 
@@ -439,8 +439,8 @@ struct fmatrix *fmat_inv(struct fmatrix *dest, const struct fmatrix *src)
 
 		if (fabs(tmp_mat->data[max_row][r]) < 1e-12) {
 			fprintf(stderr, "%s: matrix is singular\n", __func__);
-			fmat_delete(tmp_mat);
-			fmat_delete(dest);
+			fmat_free(tmp_mat);
+			fmat_free(dest);
 			return NULL;
 		}
 
@@ -487,7 +487,7 @@ struct fmatrix *fmat_inv(struct fmatrix *dest, const struct fmatrix *src)
 		}
 	}
 
-	fmat_delete(tmp_mat);
+	fmat_free(tmp_mat);
 
 	return dest;
 }
@@ -569,13 +569,13 @@ struct fmatrix *fmat_set_string(const char *str)
 		fval_t val = strtod(p, &endptr);
 		if (endptr == p) {
 			fprintf(stderr, "%s: Failed to parse number near '%s'\n", __func__, p);
-			fmat_delete(m);
+			fmat_free(m);
 			return NULL;
 		}
 
 		if (c >= cols) {
 			fprintf(stderr, "%s: Too many columns in row %zu\n", __func__, r);
-			fmat_delete(m);
+			fmat_free(m);
 			return NULL;
 		}
 

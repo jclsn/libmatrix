@@ -92,7 +92,7 @@ struct fmatrix {
 /* Allocate an empty floating-point matrix */
 struct fmatrix *fmat_alloc(const size_t rows, const size_t cols);
 /* Delete a floating-point matrix */
-void fmat_delete(struct fmatrix *m);
+void fmat_free(struct fmatrix *m);
 
 /* Set the floating-point matrix to an idenitity matrix */
 void fmat_set_identity(struct fmatrix *m);

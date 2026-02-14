@@ -92,7 +92,7 @@ struct matrix {
 /* Allocate an empty matrix */
 struct matrix *mat_alloc(const size_t rows, const size_t cols);
 /* Delete a matrix */
-void mat_delete(struct matrix *m);
+void mat_free(struct matrix *m);
 
 /* Set the matrix to an idenitity matrix */
 void mat_set_identity(struct matrix *m);

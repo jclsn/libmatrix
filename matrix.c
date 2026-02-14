@@ -56,7 +56,7 @@ error:
 	return NULL;
 }
 
-void mat_delete(struct matrix *m)
+void mat_free(struct matrix *m)
 {
 	if (!m)
 		return;
@@ -463,13 +463,13 @@ struct matrix *mat_set_string(const char *str)
 		val_t val = strtod(p, &endptr);
 		if (endptr == p) {
 			fprintf(stderr, "%s: Failed to parse number near '%s'\n", __func__, p);
-			mat_delete(m);
+			mat_free(m);
 			return NULL;
 		}
 
 		if (c >= cols) {
 			fprintf(stderr, "%s: Too many columns in row %zu\n", __func__, r);
-			mat_delete(m);
+			mat_free(m);
 			return NULL;
 		}
 
