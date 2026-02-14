@@ -57,25 +57,17 @@ error:
 
 void mat_delete(struct matrix *m)
 {
-	if (!m) {
-		errno = EINVAL;
-		perror(__func__);
+	if (!m)
 		return;
-	}
 
-	/* Free the rows */
-	for (ssize_t row = m->rows - 1; row >= 0; row--) {
-		free(m->data[row]);
-		m->data[row] = NULL;
-	}
+	for (size_t row = 0; row < m->rows; row++)
+		if (m->data[row])
+			free(m->data[row]);
 
-	/* Free the rows */
-	free(m->data);
-	m->data = NULL;
+	if (m->data)
+		free(m->data);
 
-	/* Free the struct */
 	free(m);
-	m = NULL;
 }
 
 void mat_set_identity(struct matrix *m)
